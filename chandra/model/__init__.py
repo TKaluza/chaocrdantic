@@ -48,6 +48,7 @@ class InferenceManager:
                     page_box=[0, 0, input_item.image.width, input_item.image.height],
                     token_count=result.token_count,
                     images=extract_images(result.raw, chunks, input_item.image),
+                    error=result.error,
                 )
             )
         return output

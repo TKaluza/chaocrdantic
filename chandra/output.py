@@ -30,7 +30,11 @@ def extract_images(html: str, chunks: dict, image: Image.Image):
             if not img:
                 continue
             bbox = chunk["bbox"]
-            block_image = image.crop(bbox)
+            try:
+                block_image = image.crop(bbox)
+            except ValueError:
+                # Happens when bbox coordinates are invalid
+                continue
             img_name = get_image_name(html, div_idx)
             images[img_name] = block_image
     return images
