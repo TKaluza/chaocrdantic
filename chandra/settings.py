@@ -9,7 +9,8 @@ class Settings(BaseSettings):
     # Paths
     BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     IMAGE_DPI: int = 192
-    MIN_IMAGE_DIM: int = 1024
+    MIN_PDF_IMAGE_DIM: int = 1024
+    MIN_IMAGE_DIM: int = 1536
     MODEL_CHECKPOINT: str = "datalab-to/chandra"
     TORCH_DEVICE: str | None = None
     MAX_OUTPUT_TOKENS: int = 8192
