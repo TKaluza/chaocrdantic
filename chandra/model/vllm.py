@@ -72,15 +72,16 @@ def generate_vllm(
                 temperature=temperature,
                 top_p=top_p,
             )
+            result = GenerationResult(
+                raw=completion.choices[0].message.content,
+                token_count=completion.usage.completion_tokens,
+                error=False,
+            )
         except Exception as e:
             print(f"Error during VLLM generation: {e}")
             return GenerationResult(raw="", token_count=0, error=True)
 
-        return GenerationResult(
-            raw=completion.choices[0].message.content,
-            token_count=completion.usage.completion_tokens,
-            error=False,
-        )
+        return result
 
     def process_item(item, max_retries):
         result = _generate(item)

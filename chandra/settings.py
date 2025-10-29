@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     MIN_IMAGE_DIM: int = 1536
     MODEL_CHECKPOINT: str = "datalab-to/chandra"
     TORCH_DEVICE: str | None = None
-    MAX_OUTPUT_TOKENS: int = 8192
+    MAX_OUTPUT_TOKENS: int = 12384
     TORCH_ATTN: str | None = None
 
     # vLLM server settings
