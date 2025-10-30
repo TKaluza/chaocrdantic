@@ -25,10 +25,12 @@ def generate_vllm(
     max_output_tokens: int = None,
     max_retries: int = None,
     max_workers: int | None = None,
+    custom_headers: dict | None = None,
 ) -> List[GenerationResult]:
     client = OpenAI(
         api_key=settings.VLLM_API_KEY,
         base_url=settings.VLLM_API_BASE,
+        default_headers=custom_headers,
     )
     model_name = settings.VLLM_MODEL_NAME
 
