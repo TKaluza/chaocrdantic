@@ -30,6 +30,8 @@ def generate_vllm(
     max_failure_retries: int | None = None,
     bbox_scale: int = settings.BBOX_SCALE,
     vllm_api_base: str = settings.VLLM_API_BASE,
+    temperature: float = 0.0,
+    top_p: float = 0.1,
 ) -> List[GenerationResult]:
     client = OpenAI(
         api_key=settings.VLLM_API_KEY,
@@ -51,9 +53,7 @@ def generate_vllm(
         models = client.models.list()
         model_name = models.data[0].id
 
-    def _generate(
-        item: BatchInputItem, temperature: float = 0, top_p: float = 0.1
-    ) -> GenerationResult:
+    def _generate(item: BatchInputItem, temperature, top_p) -> GenerationResult:
         prompt = item.prompt
         if not prompt:
             prompt = PROMPT_MAPPING[item.prompt_type].replace(
@@ -93,11 +93,12 @@ def generate_vllm(
         return result
 
     def process_item(item, max_retries, max_failure_retries=None):
-        result = _generate(item)
+        result = _generate(item, temperature=temperature, top_p=top_p)
         retries = 0
 
         while _should_retry(result, retries, max_retries, max_failure_retries):
-            result = _generate(item, temperature=0.3, top_p=0.95)
+            retry_temperature = min(temperature + 0.2 * (retries + 1), 0.8)
+            result = _generate(item, temperature=retry_temperature, top_p=0.95)
             retries += 1
 
         return result
