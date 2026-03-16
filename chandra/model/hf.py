@@ -60,8 +60,14 @@ def process_batch_element(item: BatchInputItem, bbox_scale: int):
 
 
 def load_model():
-    import torch
-    from transformers import AutoModelForImageTextToText, AutoProcessor
+    try:
+        import torch
+        from transformers import AutoModelForImageTextToText, AutoProcessor
+    except ImportError:
+        raise ImportError(
+            "HuggingFace backend requires additional dependencies. "
+            "Install with: pip install chandra-ocr[hf]"
+        )
 
     device_map = "auto"
     if settings.TORCH_DEVICE:

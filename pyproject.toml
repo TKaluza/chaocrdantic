@@ -13,7 +13,6 @@ dependencies = [
     "beautifulsoup4>=4.14.2",
     "click>=8.0.0",
     "filetype>=1.2.0",
-    "flask>=3.0.0",
     "markdownify==1.1.0",
     "openai>=2.2.0",
     "pillow>=10.2.0",
@@ -21,12 +20,21 @@ dependencies = [
     "pydantic-settings>=2.11.0",
     "pypdfium2>=4.30.0",
     "python-dotenv>=1.1.1",
-    "qwen-vl-utils>=0.0.14",
+    "six>=1.17.0",
+]
+
+[project.optional-dependencies]
+hf = [
     "torch>=2.8.0",
     "torchvision>=0.23.0",
     "transformers>=5.2.0",
-    "streamlit>=1.50.0",
     "accelerate>=1.11.0",
+]
+app = [
+    "streamlit>=1.50.0",
+]
+all = [
+    "chandra-ocr[hf,app]",
 ]
 
 [build-system]
@@ -44,6 +52,8 @@ include = ["chandra*"]
 
 [dependency-groups]
 dev = [
+    "chandra-ocr[all]",
+    "flask>=3.0.0",
     "pre-commit>=4.3.0",
     "pytest>=8.4.2",
 ]

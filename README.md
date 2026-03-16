@@ -11,9 +11,11 @@
   <a href="https://discord.gg/KuZwXNGnfH"><img src="https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
-# Chandra 2
+<hr/>
 
-Chandra 2 is a highly accurate OCR model that converts images and PDFs into structured HTML/Markdown/JSON while preserving layout information.
+# Chandra OCR 2
+
+Chandra OCR 2 is a highly accurate OCR model that converts images and PDFs into structured HTML/Markdown/JSON while preserving layout information.
 
 ## News
 
@@ -30,6 +32,8 @@ Chandra 2 is a highly accurate OCR model that converts images and PDFs into stru
 - Extracts images and diagrams, and adds captions and structured data
 - Two inference modes: local (HuggingFace) and remote (vLLM server)
 
+<img src="assets/examples/math/handwritten_math.png" width="600px"/>
+
 ## Hosted API
 
 - We have a hosted API for Chandra [here](https://www.datalab.to/), which is more accurate and faster.
@@ -42,14 +46,16 @@ The easiest way to start is with the CLI tools:
 ```shell
 pip install chandra-ocr
 
-# With VLLM
+# With vLLM (recommended, lightweight install)
 chandra_vllm
 chandra input.pdf ./output
 
-# With HuggingFace
+# With HuggingFace (requires torch)
+pip install chandra-ocr[hf]
 chandra input.pdf ./output --method hf
 
 # Interactive streamlit app
+pip install chandra-ocr[app]
 chandra_app
 ```
 
@@ -68,8 +74,6 @@ We also benchmarked Chandra 2 with the widely accepted olmocr benchmark:
 See full scores [below](#benchmark-table).
 
 ## Examples
-
-<img src="assets/examples/math/handwritten_math.png" width="600px"/>
 
 | Type | Name                     | Link                                                                                                        |
 |------|--------------------------|-------------------------------------------------------------------------------------------------------------|
@@ -98,10 +102,17 @@ See full scores [below](#benchmark-table).
 ### Package
 
 ```bash
+# Base install (for vLLM backend)
 pip install chandra-ocr
+
+# With HuggingFace backend (includes torch, transformers)
+pip install chandra-ocr[hf]
+
+# With all extras
+pip install chandra-ocr[all]
 ```
 
-If you're going to use the huggingface method, we also recommend installing [flash attention](https://github.com/Dao-AILab/flash-attention).
+If you're using the HuggingFace method, we also recommend installing [flash attention](https://github.com/Dao-AILab/flash-attention) for better performance.
 
 ### From Source
 
@@ -216,7 +227,6 @@ This code is Apache 2.0, and our model weights use a modified OpenRAIL-M license
 | da | 90.1% | 91.1% | 88.4% | 86.0% | 87.7% |
 | de | 93.8% | 94.8% | 83.0% | 88.3% | 93.8% |
 | el | 89.9% | 85.6% | 85.5% | 83.5% | 82.4% |
-| en | 95.2% | 96.6% | - | 90.3% | 88.3% |
 | es | 91.8% | 89.3% | 88.7% | 86.8% | 97.1% |
 | fa | 82.2% | 75.1% | 69.6% | 61.8% | 56.4% |
 | fi | 85.7% | 83.4% | 78.4% | 86.0% | 84.7% |
