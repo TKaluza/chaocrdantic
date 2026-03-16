@@ -13,29 +13,21 @@ def generate_hf(
     bbox_scale: int = settings.BBOX_SCALE,
     **kwargs,
 ) -> List[GenerationResult]:
-    from qwen_vl_utils import process_vision_info
-
     if max_output_tokens is None:
         max_output_tokens = settings.MAX_OUTPUT_TOKENS
 
-    messages = [
-        process_batch_element(item, model.processor, bbox_scale) for item in batch
-    ]
-    text = model.processor.apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True
-    )
+    conversations = [[process_batch_element(item, bbox_scale)] for item in batch]
 
-    image_inputs, _ = process_vision_info(messages)
-    inputs = model.processor(
-        text=text,
-        images=image_inputs,
-        padding=True,
+    inputs = model.processor.apply_chat_template(
+        conversations,
+        tokenize=True,
+        add_generation_prompt=True,
+        return_dict=True,
         return_tensors="pt",
-        padding_side="left",
+        padding=True,
     )
-    inputs = inputs.to("cuda")
+    inputs = inputs.to(model.device)
 
-    # Inference: Generation of the output
     generated_ids = model.generate(**inputs, max_new_tokens=max_output_tokens)
     generated_ids_trimmed = [
         out_ids[len(in_ids) :]
@@ -53,7 +45,7 @@ def generate_hf(
     return results
 
 
-def process_batch_element(item: BatchInputItem, processor, bbox_scale: int):
+def process_batch_element(item: BatchInputItem, bbox_scale: int):
     prompt = item.prompt
     prompt_type = item.prompt_type
 
@@ -63,15 +55,13 @@ def process_batch_element(item: BatchInputItem, processor, bbox_scale: int):
     content = []
     image = scale_to_fit(item.image)  # Guarantee max size
     content.append({"type": "image", "image": image})
-
     content.append({"type": "text", "text": prompt})
-    message = {"role": "user", "content": content}
-    return message
+    return {"role": "user", "content": content}
 
 
 def load_model():
     import torch
-    from transformers import Qwen3VLForConditionalGeneration, Qwen3VLProcessor
+    from transformers import AutoModelForImageTextToText, AutoProcessor
 
     device_map = "auto"
     if settings.TORCH_DEVICE:
@@ -84,10 +74,11 @@ def load_model():
     if settings.TORCH_ATTN:
         kwargs["attn_implementation"] = settings.TORCH_ATTN
 
-    model = Qwen3VLForConditionalGeneration.from_pretrained(
+    model = AutoModelForImageTextToText.from_pretrained(
         settings.MODEL_CHECKPOINT, **kwargs
     )
     model = model.eval()
-    processor = Qwen3VLProcessor.from_pretrained(settings.MODEL_CHECKPOINT)
+    processor = AutoProcessor.from_pretrained(settings.MODEL_CHECKPOINT)
+    processor.tokenizer.padding_side = "left"
     model.processor = processor
     return model
