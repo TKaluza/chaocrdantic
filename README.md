@@ -19,7 +19,7 @@ Chandra OCR 2 is a highly accurate OCR model that converts images and PDFs into 
 
 ## News
 
-- 3/2026 - Chandra 2 is here, with significant improvements to math, tables, and multilingual OCR
+- 3/2026 - Chandra 2 is here, with significant improvements to math, tables, layout, and multilingual OCR
 - 10/2025 - Chandra 1 launched
 
 ## Features
@@ -92,10 +92,6 @@ See full scores [below](#benchmark-table).
 | Languages | Russian                  | [View](https://github.com/datalab-to/chandra/blob/master/assets/examples/languages/russian.png)             |
 | Other | Charts                   | [View](https://github.com/datalab-to/chandra/blob/master/assets/examples/other/charts.png)                  |
 | Other | Chemistry                | [View](https://github.com/datalab-to/chandra/blob/master/assets/examples/other/chemistry.png)               |
-
-## Community
-
-[Discord](https://discord.gg//KuZwXNGnfH) is where we discuss future development.
 
 ## Installation
 
@@ -271,6 +267,14 @@ The table below covers the 43 most common languages, benchmarked across multiple
 We also have a more comprehensive evaluation covering 90 languages, comparing Chandra 2 against Gemini 2.5 Flash. The average scores are lower than the 43-language table above because this includes many lower-resource languages. Chandra 2 averages **72.7%** vs Gemini 2.5 Flash at **60.8%**.
 
 See the [full 90-language results](FULL_BENCHMARKS.md).
+
+## Throughput
+
+Benchmarked with vLLM on a single NVIDIA H100 80GB GPU using a diverse mix of documents (math, tables, scans, multi-column layouts) from the olmOCR benchmark set.  This set is significantly slower than real-world usage - we estimate 2 pages/s in real-world usage.
+
+| Configuration | Pages/sec | Avg Latency | P95 Latency | Failure Rate |
+|---|:---:|:---:|:---:|:---:|
+| vLLM, 96 concurrent sequences | 1.44 | 60s | 156s | 0% |
 
 # Credits
 
