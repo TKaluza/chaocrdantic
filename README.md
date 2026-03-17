@@ -62,7 +62,7 @@ chandra_app
 
 ## Benchmarks
 
-Multilingual performance was a focus for us with Chandra 2.  There isn't a good public benchmark multilingual OCR benchmark, so we made our own.  This tests tables, math, ordering, layout, and text accuracy.
+Multilingual performance was a focus for us with Chandra 2.  There isn't a good public multilingual OCR benchmark, so we made our own.  This tests tables, math, ordering, layout, and text accuracy.
 
 <img src="assets/benchmarks/multilingual.png" width="600px"/>
 
@@ -182,7 +182,7 @@ Settings can be configured via environment variables or a `local.env` file:
 ```bash
 # Model settings
 MODEL_CHECKPOINT=datalab-to/chandra-ocr-2
-MAX_OUTPUT_TOKENS=8192
+MAX_OUTPUT_TOKENS=12384
 
 # vLLM settings
 VLLM_API_BASE=http://localhost:8000/v1
