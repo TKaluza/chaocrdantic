@@ -15,17 +15,18 @@
 
 # Chandra OCR 2
 
-Chandra OCR 2 is a highly accurate OCR model that converts images and PDFs into structured HTML/Markdown/JSON while preserving layout information.
+Chandra OCR 2 is a state of the art OCR model that converts images and PDFs into structured HTML/Markdown/JSON while preserving layout information.
 
 ## News
 
-- 3/2026 - Chandra 2 is here, with significant improvements to math, tables, layout, and multilingual OCR
+- 3/2026 - Chandra 2 is here with significant improvements to math, tables, layout, and multilingual OCR
 - 10/2025 - Chandra 1 launched
 
 ## Features
 
+- Tops external olmocr benchmark and significant improvement in internal multilingual benchmarks
 - Convert documents to markdown, html, or json with detailed layout information
-- Support for 40+ languages ([benchmark below](#multilingual-benchmark))
+- Support for 90+ languages ([benchmark below](#multilingual-benchmark))
 - Excellent handwriting support
 - Reconstructs forms accurately, including checkboxes
 - Strong performance with tables, math, and complex layouts
