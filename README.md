@@ -65,7 +65,7 @@ Multilingual performance was a focus for us with Chandra 2.  There isn't a good 
 
 <img src="assets/benchmarks/multilingual.png" width="600px"/>
 
-See full scores [below](#multilingual-benchmark-table).
+See full scores [below](#multilingual-benchmark-table). We also have a [full 90-language benchmark](FULL_BENCHMARKS.md).
 
 We also benchmarked Chandra 2 with the widely accepted olmocr benchmark:
 
@@ -144,7 +144,7 @@ chandra ./documents ./output --method hf
 - `--max-workers INTEGER`: Parallel workers for vLLM
 - `--include-images/--no-images`: Extract and save images (default: include)
 - `--include-headers-footers/--no-headers-footers`: Include page headers/footers (default: exclude)
-- `--batch-size INTEGER`: Pages per batch (default: 1)
+- `--batch-size INTEGER`: Pages per batch (default: 28 for vllm, 1 for hf)
 
 **Output Structure:**
 
@@ -152,7 +152,7 @@ Each processed file creates a subdirectory with:
 - `<filename>.md` - Markdown output
 - `<filename>.html` - HTML output
 - `<filename>_metadata.json` - Metadata (page info, token count, etc.)
-- `images/` - Extracted images from the document
+- Extracted images are saved directly in the output directory
 
 ### Streamlit Web App
 
@@ -176,7 +176,7 @@ This launches a Docker container with optimized inference settings. Configure vi
 - `VLLM_MODEL_NAME`: Model name for the server (default: `chandra`)
 - `VLLM_GPUS`: GPU device IDs (default: `0`)
 
-You can also start your own vllm server with the `datalab-to/chandra` model.
+You can also start your own vllm server with the `datalab-to/chandra-ocr-2` model.
 
 ### Configuration
 
@@ -184,7 +184,7 @@ Settings can be configured via environment variables or a `local.env` file:
 
 ```bash
 # Model settings
-MODEL_CHECKPOINT=datalab-to/chandra
+MODEL_CHECKPOINT=datalab-to/chandra-ocr-2
 MAX_OUTPUT_TOKENS=8192
 
 # vLLM settings
@@ -217,6 +217,8 @@ This code is Apache 2.0, and our model weights use a modified OpenRAIL-M license
 
 
 # Multilingual benchmark table
+
+The table below covers the 43 most common languages, benchmarked across multiple models. For a comprehensive evaluation across 90 languages (Chandra 2 vs Gemini 2.5 Flash only), see the [full 90-language benchmark](#full-90-language-benchmark-table).
 
 | Language | Datalab API | Chandra 2 | Chandra 1 | Gemini 2.5 Flash | GPT-5 Mini |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -264,11 +266,17 @@ This code is Apache 2.0, and our model weights use a modified OpenRAIL-M license
 | zh | 87.8% | 88.7% | 88.3% | 70.0% | 70.4% |
 | **Average** | **80.4%** | **77.8%** | **69.4%** | **67.6%** | **60.5%** |
 
+# Full 90-language benchmark table
+
+We also have a more comprehensive evaluation covering 90 languages, comparing Chandra 2 against Gemini 2.5 Flash. The average scores are lower than the 43-language table above because this includes many lower-resource languages. Chandra 2 averages **72.7%** vs Gemini 2.5 Flash at **60.8%**.
+
+See the [full 90-language results](FULL_BENCHMARKS.md).
+
 # Credits
 
 Thank you to the following open source projects:
 
 - [Huggingface Transformers](https://github.com/huggingface/transformers)
 - [VLLM](https://github.com/vllm-project/vllm)
-- [olmocr](github.com/allenai/olmocr)
-- [Qwen 3 VL](https://github.com/QwenLM/Qwen3)
+- [olmocr](https://github.com/allenai/olmocr)
+- [Qwen 3.5](https://github.com/QwenLM/Qwen3)

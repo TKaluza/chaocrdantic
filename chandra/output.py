@@ -27,7 +27,7 @@ def extract_images(html: str, chunks: dict, image: Image.Image):
     for idx, chunk in enumerate(chunks):
         div_idx += 1
         if chunk["label"] in ["Image", "Figure"]:
-            img = chunk["content"].find("img")
+            img = BeautifulSoup(chunk["content"], "html.parser").find("img")
             if not img:
                 continue
             bbox = chunk["bbox"]

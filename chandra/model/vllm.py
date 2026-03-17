@@ -56,9 +56,7 @@ def generate_vllm(
     def _generate(item: BatchInputItem, temperature, top_p) -> GenerationResult:
         prompt = item.prompt
         if not prompt:
-            prompt = PROMPT_MAPPING[item.prompt_type].replace(
-                "{bbox_scale}", str(bbox_scale)
-            )
+            prompt = PROMPT_MAPPING[item.prompt_type]
 
         content = []
         image = scale_to_fit(item.image)

@@ -16,7 +16,7 @@ def generate_hf(
     if max_output_tokens is None:
         max_output_tokens = settings.MAX_OUTPUT_TOKENS
 
-    conversations = [[process_batch_element(item, bbox_scale)] for item in batch]
+    conversations = [[process_batch_element(item)] for item in batch]
 
     inputs = model.processor.apply_chat_template(
         conversations,
@@ -45,12 +45,12 @@ def generate_hf(
     return results
 
 
-def process_batch_element(item: BatchInputItem, bbox_scale: int):
+def process_batch_element(item: BatchInputItem):
     prompt = item.prompt
     prompt_type = item.prompt_type
 
     if not prompt:
-        prompt = PROMPT_MAPPING[prompt_type].replace("{bbox_scale}", str(bbox_scale))
+        prompt = PROMPT_MAPPING[prompt_type]
 
     content = []
     image = scale_to_fit(item.image)  # Guarantee max size
