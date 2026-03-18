@@ -140,14 +140,12 @@ wheels = [
 
 [[package]]
 name = "chandra-ocr"
-version = "0.1.9"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
-    { name = "accelerate" },
     { name = "beautifulsoup4" },
     { name = "click" },
     { name = "filetype" },
-    { name = "flask" },
     { name = "markdownify" },
     { name = "openai" },
     { name = "pillow" },
@@ -155,7 +153,22 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pypdfium2" },
     { name = "python-dotenv" },
+    { name = "six" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "accelerate" },
     { name = "streamlit" },
+    { name = "torch" },
+    { name = "torchvision" },
+    { name = "transformers" },
+]
+app = [
+    { name = "streamlit" },
+]
+hf = [
+    { name = "accelerate" },
     { name = "torch" },
     { name = "torchvision" },
     { name = "transformers" },
@@ -163,17 +176,19 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "chandra-ocr", extra = ["all"] },
+    { name = "flask" },
     { name = "pre-commit" },
     { name = "pytest" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "accelerate", specifier = ">=1.11.0" },
+    { name = "accelerate", marker = "extra == 'hf'", specifier = ">=1.11.0" },
     { name = "beautifulsoup4", specifier = ">=4.14.2" },
+    { name = "chandra-ocr", extras = ["hf", "app"], marker = "extra == 'all'" },
     { name = "click", specifier = ">=8.0.0" },
     { name = "filetype", specifier = ">=1.2.0" },
-    { name = "flask", specifier = ">=3.0.0" },
     { name = "markdownify", specifier = "==1.1.0" },
     { name = "openai", specifier = ">=2.2.0" },
     { name = "pillow", specifier = ">=10.2.0" },
@@ -181,14 +196,17 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "pypdfium2", specifier = ">=4.30.0" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
-    { name = "streamlit", specifier = ">=1.50.0" },
-    { name = "torch", specifier = ">=2.8.0" },
-    { name = "torchvision", specifier = ">=0.23.0" },
-    { name = "transformers", specifier = ">=5.2.0" },
+    { name = "six", specifier = ">=1.17.0" },
+    { name = "streamlit", marker = "extra == 'app'", specifier = ">=1.50.0" },
+    { name = "torch", marker = "extra == 'hf'", specifier = ">=2.8.0" },
+    { name = "torchvision", marker = "extra == 'hf'", specifier = ">=0.23.0" },
+    { name = "transformers", marker = "extra == 'hf'", specifier = ">=5.2.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "chandra-ocr", extras = ["all"] },
+    { name = "flask", specifier = ">=3.0.0" },
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "pytest", specifier = ">=8.4.2" },
 ]
