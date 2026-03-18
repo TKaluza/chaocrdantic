@@ -9,11 +9,11 @@ class Settings(BaseSettings):
     IMAGE_DPI: int = 192
     MIN_PDF_IMAGE_DIM: int = 1024
     MIN_IMAGE_DIM: int = 1536
-    MODEL_CHECKPOINT: str = "datalab-to/chandra"
+    MODEL_CHECKPOINT: str = "datalab-to/chandra-ocr-2"
     TORCH_DEVICE: str | None = None
     MAX_OUTPUT_TOKENS: int = 12384
     TORCH_ATTN: str | None = None
-    BBOX_SCALE: int = 1024
+    BBOX_SCALE: int = 1000
 
     # vLLM server settings
     VLLM_API_KEY: str = "EMPTY"

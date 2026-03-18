@@ -34,6 +34,7 @@ ALLOWED_TAGS = [
     "thead",
     "big",
     "code",
+    "chem",
 ]
 ALLOWED_ATTRIBUTES = [
     "class",
@@ -48,6 +49,8 @@ ALLOWED_ATTRIBUTES = [
     "href",
     "alt",
     "align",
+    "data-bbox",
+    "data-label",
 ]
 
 PROMPT_ENDING = f"""
@@ -57,15 +60,17 @@ Guidelines:
 * Inline math: Surround math with <math>...</math> tags. Math expressions should be rendered in KaTeX-compatible LaTeX. Use display for block math.
 * Tables: Use colspan and rowspan attributes to match table structure.
 * Formatting: Maintain consistent formatting with the image, including spacing, indentation, subscripts/superscripts, and special characters.
-* Images: Include a description of any images in the alt attribute of an <img> tag. Do not fill out the src property.
+* Images: Include a description of any images in the alt attribute of an <img> tag. Do not fill out the src property. Describe in detail inside the div tag. Also convert charts to high fidelity data, and convert diagrams to mermaid.
 * Forms: Mark checkboxes and radio buttons properly.
 * Text: join lines together properly into paragraphs using <p>...</p> tags.  Use <br> tags for line breaks within paragraphs, but only when absolutely necessary to maintain meaning.
+* Chemistry: Use <chem>...</chem> tags for chemical formulas with reactive SMILES.
+* Lists: Preserve indents and proper list markers.
 * Use the simplest possible HTML structure that accurately represents the content of the block.
 * Make sure the text is accurate and easy for a human to read and interpret.  Reading order should be correct and natural.
 """.strip()
 
 OCR_LAYOUT_PROMPT = f"""
-OCR this image to HTML, arranged as layout blocks.  Each layout block should be a div with the data-bbox attribute representing the bounding box of the block in [x0, y0, x1, y1] format.  Bboxes are normalized 0-{{bbox_scale}}. The data-label attribute is the label for the block.
+OCR this image to HTML, arranged as layout blocks.  Each layout block should be a div with the data-bbox attribute representing the bounding box of the block in x0 y0 x1 y1 format.  Bboxes are normalized 0-1000. The data-label attribute is the label for the block.
 
 Use the following labels:
 - Caption
@@ -83,6 +88,10 @@ Use the following labels:
 - Form
 - Table-Of-Contents
 - Figure
+- Chemical-Block
+- Diagram
+- Bibliography
+- Blank-Page
 
 {PROMPT_ENDING}
 """.strip()
@@ -97,3 +106,9 @@ PROMPT_MAPPING = {
     "ocr_layout": OCR_LAYOUT_PROMPT,
     "ocr": OCR_PROMPT,
 }
+
+if __name__ == "__main__":
+    print("OCR Layout Prompt:")
+    print(OCR_LAYOUT_PROMPT)
+    print("\nOCR Prompt:")
+    print(OCR_PROMPT)

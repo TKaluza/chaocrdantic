@@ -1,5 +1,4 @@
 import hashlib
-import json
 import re
 from dataclasses import dataclass, asdict
 from functools import lru_cache
@@ -28,7 +27,7 @@ def extract_images(html: str, chunks: dict, image: Image.Image):
     for idx, chunk in enumerate(chunks):
         div_idx += 1
         if chunk["label"] in ["Image", "Figure"]:
-            img = chunk["content"].find("img")
+            img = BeautifulSoup(chunk["content"], "html.parser").find("img")
             if not img:
                 continue
             bbox = chunk["bbox"]
@@ -54,6 +53,9 @@ def parse_html(
         div_idx += 1
         label = div.get("data-label")
 
+        if label == "Blank-Page":
+            continue
+
         # Skip headers and footers if not included
         if label and not include_headers_footers:
             if label in ["Page-Header", "Page-Footer"]:
@@ -73,6 +75,12 @@ def parse_html(
             else:
                 img = BeautifulSoup(f"<img src='{img_src}'/>", "html.parser")
                 div.append(img)
+
+        # Strip img tags without src in non-image blocks (model hallucinations)
+        if label not in ["Image", "Figure"]:
+            for img_tag in div.find_all("img"):
+                if not img_tag.get("src"):
+                    img_tag.decompose()
 
         # Wrap text content in <p> tags if no inner HTML tags exist
         if label in ["Text"] and not re.search(
@@ -196,19 +204,20 @@ def parse_layout(html: str, image: Image.Image, bbox_scale=settings.BBOX_SCALE):
     height_scaler = height / bbox_scale
     layout_blocks = []
     for div in top_level_divs:
+        label = div.get("data-label")
+        if label == "Blank-Page":
+            continue
+
         bbox = div.get("data-bbox")
 
         try:
-            bbox = json.loads(bbox)
+            bbox = bbox.split(" ")
+            bbox = list(map(int, bbox))
             assert len(bbox) == 4, "Invalid bbox length"
         except Exception:
-            try:
-                bbox = bbox.split(" ")
-                assert len(bbox) == 4, "Invalid bbox length"
-            except Exception:
-                bbox = [0, 0, 1, 1]
+            print(f"Invalid bbox format: {bbox}, defaulting to full image")
+            bbox = [0, 0, 1, 1]
 
-        bbox = list(map(int, bbox))
         # Normalize bbox
         bbox = [
             max(0, int(bbox[0] * width_scaler)),
@@ -216,8 +225,16 @@ def parse_layout(html: str, image: Image.Image, bbox_scale=settings.BBOX_SCALE):
             min(int(bbox[2] * width_scaler), width),
             min(int(bbox[3] * height_scaler), height),
         ]
-        label = div.get("data-label", "block")
+        if not label:
+            label = "block"
         content = str(div.decode_contents())
+
+        # Strip nested data-bbox attributes (not needed in open source)
+        content_soup = BeautifulSoup(content, "html.parser")
+        for tag in content_soup.find_all(attrs={"data-bbox": True}):
+            del tag["data-bbox"]
+        content = str(content_soup)
+
         layout_blocks.append(LayoutBlock(bbox=bbox, label=label, content=content))
     return layout_blocks
 

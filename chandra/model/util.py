@@ -1,42 +1,65 @@
-import math
 from typing import Tuple
 
 from PIL import Image
-
-from chandra.output import parse_markdown
 
 
 def scale_to_fit(
     img: Image.Image,
     max_size: Tuple[int, int] = (3072, 2048),
-    min_size: Tuple[int, int] = (28, 28),
+    min_size: Tuple[int, int] = (1792, 28),
+    grid_size: int = 28,
 ):
     resample_method = Image.Resampling.LANCZOS
 
     width, height = img.size
 
     # Check for empty or invalid image
-    if width == 0 or height == 0:
+    if width <= 0 or height <= 0:
         return img
 
-    max_width, max_height = max_size
-    min_width, min_height = min_size
-
+    original_ar = width / height
     current_pixels = width * height
-    max_pixels = max_width * max_height
-    min_pixels = min_width * min_height
+    max_pixels = max_size[0] * max_size[1]
+    min_pixels = min_size[0] * min_size[1]
 
+    # 1. Determine ideal float scale based on pixel bounds
+    scale = 1.0
     if current_pixels > max_pixels:
-        scale_factor = (max_pixels / current_pixels) ** 0.5
-
-        new_width = math.floor(width * scale_factor)
-        new_height = math.floor(height * scale_factor)
+        scale = (max_pixels / current_pixels) ** 0.5
     elif current_pixels < min_pixels:
-        scale_factor = (min_pixels / current_pixels) ** 0.5
+        scale = (min_pixels / current_pixels) ** 0.5
 
-        new_width = math.ceil(width * scale_factor)
-        new_height = math.ceil(height * scale_factor)
-    else:
+    # 2. Convert dimensions to integer "grid blocks"
+    w_blocks = max(1, round((width * scale) / grid_size))
+    h_blocks = max(1, round((height * scale) / grid_size))
+
+    # 3. Refinement Loop: Ensure we are under the max limit
+    while (w_blocks * h_blocks * grid_size * grid_size) > max_pixels:
+        if w_blocks == 1 and h_blocks == 1:
+            break
+
+        if w_blocks == 1:
+            h_blocks -= 1
+            continue
+        if h_blocks == 1:
+            w_blocks -= 1
+            continue
+
+        # Compare distortion: Which move preserves Aspect Ratio better?
+        ar_w_loss = abs(((w_blocks - 1) / h_blocks) - original_ar)
+        ar_h_loss = abs((w_blocks / (h_blocks - 1)) - original_ar)
+
+        if ar_w_loss < ar_h_loss:
+            w_blocks -= 1
+        else:
+            h_blocks -= 1
+
+    # 4. Calculate final pixel dimensions
+    new_width = w_blocks * grid_size
+    new_height = h_blocks * grid_size
+
+    # Return original if no changes were needed
+    if (new_width, new_height) == (width, height):
         return img
 
     return img.resize((new_width, new_height), resample=resample_method)
@@ -49,12 +72,6 @@ def detect_repeat_token(
     cut_from_end: int = 0,
     scaling_factor: float = 3.0,
 ):
-    try:
-        predicted_tokens = parse_markdown(predicted_tokens)
-    except Exception as e:
-        print(f"Error parsing markdown: {e}")
-        return True
-
     if cut_from_end > 0:
         predicted_tokens = predicted_tokens[:-cut_from_end]
 
