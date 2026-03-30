@@ -17,6 +17,7 @@ dependencies = [
     "openai>=2.2.0",
     "pillow>=10.2.0",
     "pydantic>=2.12.0",
+    "pydantic-ai>=0.0.20",
     "pydantic-settings>=2.11.0",
     "pypdfium2>=4.30.0",
     "python-dotenv>=1.1.1",
@@ -46,9 +47,10 @@ chandra = "chandra.scripts.cli:main"
 chandra_app = "chandra.scripts.run_app:main"
 chandra_screenshot = "chandra.scripts.screenshot_app:main"
 chandra_vllm = "chandra.scripts.vllm:main"
+chandra_ocr_pydantic = "chandra_ocr_pydantic.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["chandra*"]
+include = ["chandra*", "chandra_ocr_pydantic*"]
 
 [dependency-groups]
 dev = [
