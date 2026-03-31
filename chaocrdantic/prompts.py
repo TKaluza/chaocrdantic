@@ -1,8 +1,8 @@
 """
 OCR prompts for the pydantic-ai agent.
 
-These are identical to chandra.prompts but kept as a local copy so that
-chandra_ocr_pydantic can be used standalone without importing from chandra.
+These are kept as a local copy so that chaocrdantic can be used standalone
+without depending on the upstream Chandra repository.
 """
 
 ALLOWED_TAGS = [

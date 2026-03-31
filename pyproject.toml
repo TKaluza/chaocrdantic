@@ -1,18 +1,21 @@
 [project]
-name = "chandra-ocr-pydantic"
-version = "0.1.0"
-description = "Pydantic-AI based OCR library for multi-page PDF processing."
-requires-python = ">=3.10"
+name = "chaocrdantic"
+version = "0.5.0"
+description = "Standalone OCR library refactored from Datalab's Chandra project."
+requires-python = ">=3.13"
 license = {text = "Apache-2.0"}
 keywords = ["ocr", "pdf", "markdown", "layout", "pydantic-ai"]
 dependencies = [
+    "beautifulsoup4>=4.12.0",
     "click>=8.0.0",
     "filetype>=1.2.0",
+    "markdownify>=0.13.0",
     "pillow>=10.2.0",
     "pydantic>=2.12.0",
-    "pydantic-ai>=0.0.20",
+    "pydantic-ai>=1.70.0",
     "pydantic-settings>=2.11.0",
     "pypdfium2>=4.30.0",
+    "six>=1.16.0",
 ]
 
 [build-system]
@@ -20,7 +23,14 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
-chandra_ocr_pydantic = "chandra_ocr_pydantic.cli:main"
+chaocrdantic = "chaocrdantic.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["chandra_ocr_pydantic*"]
+include = ["chaocrdantic*"]
+
+[dependency-groups]
+dev = [
+    "mistralai>=1.9.11,<2",
+    "pydantic-ai-slim[mistral]>=1.74.0",
+    "pytest>=8.4.0",
+]
