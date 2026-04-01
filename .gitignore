@@ -2,6 +2,7 @@ local.env
 experiments
 .DS_Store
 .vscode/
+.codex
 *.egg-info/
 output/*
 output

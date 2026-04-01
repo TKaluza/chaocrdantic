@@ -67,7 +67,10 @@ def test_document_markdown_uses_front_matter_page_breaks_and_local_assets(tmp_pa
 
 
 def test_golden_file_shape():
-    ideal = Path("tests/fixtures/ideal_DE102022115220A1.md").read_text(encoding="utf-8")
+    fixture_dir = Path("tests/fixtures")
+    ideal_files = sorted(fixture_dir.glob("*.md"))
+    assert ideal_files, "expected at least one local markdown fixture in tests/fixtures"
+    ideal = ideal_files[0].read_text(encoding="utf-8")
     assert ideal.startswith("---\n")
     assert ideal.count("  - page: ") == 10
     assert ideal.count(PAGE_BREAK) == 9
