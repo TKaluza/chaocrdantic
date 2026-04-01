@@ -67,7 +67,7 @@ def test_document_markdown_uses_front_matter_page_breaks_and_local_assets(tmp_pa
 
 
 def test_golden_file_shape():
-    ideal = Path("ideal_ExampleDocument.md").read_text(encoding="utf-8")
+    ideal = Path("tests/fixtures/ideal_DE102022115220A1.md").read_text(encoding="utf-8")
     assert ideal.startswith("---\n")
     assert ideal.count("  - page: ") == 10
     assert ideal.count(PAGE_BREAK) == 9

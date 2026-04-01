@@ -73,7 +73,7 @@ asyncio.run(main())
 ## CLI
 
 ```bash
-uv run chaocrdantic ExampleDocument.pdf --output-dir output/run --save-html --save-json
+uv run chaocrdantic <document.pdf> --output-dir output/run --save-html --save-json
 ```
 
 Useful flags:
