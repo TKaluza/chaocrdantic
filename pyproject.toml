@@ -2,21 +2,39 @@
 name = "chaocrdantic"
 version = "0.5.0"
 description = "Standalone OCR library refactored from Datalab's Chandra project."
-requires-python = ">=3.13"
-license = {text = "Apache-2.0"}
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
 keywords = ["ocr", "pdf", "markdown", "layout", "pydantic-ai"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Text Processing :: Markup :: HTML",
+]
 dependencies = [
-    "beautifulsoup4>=4.12.0",
+    "beautifulsoup4>=4.00.0",
     "click>=8.0.0",
     "filetype>=1.2.0",
     "markdownify>=0.13.0",
-    "pillow>=10.2.0",
+    "pillow>=10.0.0",
     "pydantic>=2.12.0",
-    "pydantic-ai>=1.70.0",
-    "pydantic-settings>=2.11.0",
-    "pypdfium2>=4.30.0",
-    "six>=1.16.0",
+    "pydantic-ai>=1.00.0",
+    "pydantic-settings>=2.00.0",
+    "pypdfium2>=4.00.0",
+    "six>=1.00.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/TKaluza/chaocrdantic"
+Repository = "https://github.com/TKaluza/chaocrdantic"
+Issues = "https://github.com/TKaluza/chaocrdantic/issues"
+Chandra-Upstream = "https://github.com/datalab-to/chandra"
 
 [build-system]
 requires = ["setuptools>=61"]
@@ -30,7 +48,5 @@ include = ["chaocrdantic*"]
 
 [dependency-groups]
 dev = [
-    "mistralai>=1.9.11,<2",
-    "pydantic-ai-slim[mistral]>=1.74.0",
     "pytest>=8.4.0",
 ]
