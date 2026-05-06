@@ -24,6 +24,16 @@ def _yaml_quote(value: str) -> str:
     return f'"{escaped}"'
 
 
+def _yaml_block(lines: list[str], key: str, value: str, *, indent: str) -> None:
+    text = value.strip()
+    if "\n" not in text:
+        lines.append(f"{indent}{key}: {_yaml_quote(text)}")
+        return
+    lines.append(f"{indent}{key}: |")
+    for line in text.splitlines():
+        lines.append(f"{indent}  {line.rstrip()}")
+
+
 def _front_matter(result) -> str:
     lines = ["---"]
     lines.append(f"doc_id: {_yaml_quote(Path(result.file_path).stem)}")
@@ -37,6 +47,25 @@ def _front_matter(result) -> str:
         lines.append(
             f"    dimensions: {{dpi: {dpi}, width: {dims.width}, height: {dims.height}}}"
         )
+        if page.layout_id is not None:
+            lines.append(f"    layout: {page.layout_id}")
+        if page.header_text:
+            _yaml_block(lines, "header", page.header_text, indent="    ")
+        if page.footer_text:
+            _yaml_block(lines, "footer", page.footer_text, indent="    ")
+    if result.layouts:
+        lines.append("layouts:")
+        for layout in result.layouts:
+            lines.append(f"  - id: {layout.layout_id}")
+            page_numbers = ", ".join(str(page_number + 1) for page_number in layout.page_numbers)
+            lines.append(f"    pages: [{page_numbers}]")
+            if layout.is_outlier:
+                lines.append("    is_outlier: true")
+            lines.append(f"    representative_page: {layout.representative_page + 1}")
+            if layout.header_text:
+                _yaml_block(lines, "header", layout.header_text, indent="    ")
+            if layout.footer_text:
+                _yaml_block(lines, "footer", layout.footer_text, indent="    ")
     lines.append("---")
     return "\n".join(lines)
 

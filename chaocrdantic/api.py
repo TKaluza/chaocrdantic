@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import List, Optional
 
 from PIL import Image as _PilImage
@@ -22,7 +23,7 @@ def _get_agent() -> ChaocrdanticAgent:
 
 
 def ocr_file(
-    file_path: str,
+    file_path: str | Path | bytes,
     page_range: Optional[List[int]] = None,
 ) -> OCRResult:
     """
@@ -35,7 +36,8 @@ def ocr_file(
     CHAOCRDANTIC_MODEL_NAME environment variables before the first call.
 
     Args:
-        file_path: Path to the PDF or image file.
+        file_path: Path to the PDF or image file, or bytes containing an
+            already-read PDF/image payload.
         page_range: Optional list of 0-based page indices to process.
             Pass None (default) to process all pages.
 
@@ -57,7 +59,7 @@ def ocr_file(
 
 
 async def ocr_file_async(
-    file_path: str,
+    file_path: str | Path | bytes,
     page_range: Optional[List[int]] = None,
 ) -> OCRResult:
     """Async OCR for a PDF or image file using the default agent configuration."""

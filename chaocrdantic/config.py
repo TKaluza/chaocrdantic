@@ -15,7 +15,7 @@ class ChaocrdanticSettings(BaseSettings):
 
     # Provider / model
     # The default model name matches the upstream Chandra deployment.
-    MODEL_NAME: str = "chandra-ocr-2-vllm"
+    MODEL_NAME: str = "chandra-ocr-2-parallel" # chandra-ocr-2-vllm
     BASE_URL: str = "http://127.0.0.1:12434/v1"
     API_KEY: str = "EMPTY"
 
@@ -39,6 +39,11 @@ class ChaocrdanticSettings(BaseSettings):
     INFERENCE_MAX_IMAGE_HEIGHT: int = 2048
     INFERENCE_MIN_IMAGE_WIDTH: int = 1792
     INFERENCE_MIN_IMAGE_HEIGHT: int = 28
+
+    # --clean-markdown mode
+    CLEAN_MARKDOWN: bool = False
+    CLEAN_MARKDOWN_MIN_PAGES: int = 2
+    CLEAN_MARKDOWN_LAYOUT_THRESHOLD: float = 0.72
 
 
 # Module-level singleton loaded once at import time.
