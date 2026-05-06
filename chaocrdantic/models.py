@@ -61,6 +61,21 @@ class OCRPageResult(BaseModel):
     )
     error: bool = Field(default=False, description="True if inference failed for this page")
     error_message: Optional[str] = Field(default=None, description="Error message if error=True")
+    layout_id: Optional[int] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Clean-markdown layout cluster ID",
+    )
+    header_text: Optional[str] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Cluster-level header Markdown",
+    )
+    footer_text: Optional[str] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Cluster-level footer Markdown",
+    )
 
     _pil_images: dict[str, "Image.Image"] = PrivateAttr(default_factory=dict)
 
@@ -71,6 +86,25 @@ class OCRPageResult(BaseModel):
         return self._pil_images.items()
 
 
+class LayoutSummary(BaseModel):
+    """Document-level summary for a clean-markdown layout cluster."""
+
+    layout_id: int = Field(description="1-based layout cluster ID")
+    page_numbers: List[int] = Field(description="0-based page indices in the cluster")
+    header_text: Optional[str] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Cluster-level header Markdown",
+    )
+    footer_text: Optional[str] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Cluster-level footer Markdown",
+    )
+    is_outlier: bool = Field(default=False, description="True for single-page outlier clusters")
+    representative_page: int = Field(description="0-based page index used for header/footer OCR")
+
+
 class OCRResult(BaseModel):
     """Aggregated OCR result for an entire document."""
 
@@ -79,6 +113,11 @@ class OCRResult(BaseModel):
     ocr_model: str = Field(description="Model name used for OCR")
     num_pages: int = Field(description="Total number of pages processed")
     pages: List[OCRPageResult] = Field(description="Per-page results in order")
+    layouts: Optional[List[LayoutSummary]] = Field(
+        default=None,
+        exclude_if=lambda value: value is None,
+        description="Clean-markdown layout summaries, when layout analysis was used",
+    )
 
     @property
     def asset_dir_name(self) -> str:

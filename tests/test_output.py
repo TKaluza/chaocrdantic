@@ -3,7 +3,7 @@ from pathlib import Path
 from PIL import Image
 
 from chaocrdantic.document_renderer import PAGE_BREAK
-from chaocrdantic.models import ExtractedImage, LayoutBlock, OCRPageResult, OCRResult, PageDimensions
+from chaocrdantic.models import ExtractedImage, LayoutBlock, LayoutSummary, OCRPageResult, OCRResult, PageDimensions
 from chaocrdantic.output import extract_images, parse_chunks, parse_html, parse_markdown
 
 
@@ -119,3 +119,47 @@ def test_document_markdown_preserves_error_pages_with_page_breaks(tmp_path):
     assert PAGE_BREAK in markdown
     assert "OCR error on page 2" in markdown
     assert "Context size has been exceeded." in markdown
+
+
+def test_document_markdown_includes_clean_markdown_layout_front_matter(tmp_path):
+    page_1 = _page_result(0)
+    page_1.layout_id = 1
+    page_1.header_text = "Quarterly Report\nQ1 2026"
+    page_1.footer_text = "Page 1 of 2"
+    page_2 = _page_result(1)
+    page_2.layout_id = 2
+    page_2.header_text = "Appendix"
+    page_2.footer_text = "Page 2 of 2"
+    result = OCRResult(
+        file_path=str(tmp_path / "sample.pdf"),
+        ocr_engine="chaocrdantic",
+        ocr_model="test-model",
+        num_pages=2,
+        pages=[page_1, page_2],
+        layouts=[
+            LayoutSummary(
+                layout_id=1,
+                page_numbers=[0],
+                header_text="Quarterly Report\nQ1 2026",
+                footer_text="Page 1 of 2",
+                is_outlier=False,
+                representative_page=0,
+            ),
+            LayoutSummary(
+                layout_id=2,
+                page_numbers=[1],
+                header_text="Appendix",
+                footer_text="Page 2 of 2",
+                is_outlier=True,
+                representative_page=1,
+            ),
+        ],
+    )
+
+    markdown = result.markdown
+
+    assert "    layout: 1" in markdown
+    assert "    header: |\n      Quarterly Report\n      Q1 2026" in markdown
+    assert "layouts:\n  - id: 1" in markdown
+    assert "    pages: [1]" in markdown
+    assert "    is_outlier: true" in markdown

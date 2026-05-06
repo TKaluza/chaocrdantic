@@ -49,6 +49,12 @@ def _parse_pages(pages_str: Optional[str]) -> Optional[List[int]]:
     default=False,
     help="Include page headers and footers in output.",
 )
+@click.option(
+    "--clean-markdown",
+    is_flag=True,
+    default=False,
+    help="Analyze page layouts, OCR header/footer once per layout group, OCR only the main region per page. Multi-page PDFs only.",
+)
 def main(
     input_path: str,
     output_dir: Optional[str],
@@ -65,10 +71,12 @@ def main(
     max_retries: Optional[int],
     include_images: bool,
     include_headers_footers: bool,
+    clean_markdown: bool,
 ) -> None:
     settings_kwargs = {
         "INCLUDE_IMAGES": include_images,
         "INCLUDE_HEADERS_FOOTERS": include_headers_footers,
+        "CLEAN_MARKDOWN": clean_markdown,
     }
     if base_url:
         settings_kwargs["BASE_URL"] = base_url
